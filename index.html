@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+    <div class="class-name1 a">
+        <div class="class-name2 b">
+            <span class="class-name3 d" id="find">
+                classname3的dom节点
+            </span>
+            <span class="class-name3 d">
+                classname3的dom节点
+            </span>
+        </div>
+        <div class="class-name2 c">
+            <span class="class-name3 d">
+                classname3的dom节点
+            </span>
+            <span class="class-name3 d">
+                classname3的dom节点
+            </span>
+        </div>
+    </div>
+    <script>
+        /**
+        * 图的广度搜索
+        * element: 节点元素，例如： document.querySelector('#id')
+        * node: 字符串，例如，‘.class-name3’
+        */
+        function bFind(element, node) {
+            if (element === null || element === undefined 
+            || node === null || node === undefined) return [];
+            let queue = [];
+            let arr = [];
+            if (element) {
+                queue.push(element);
+                while(queue.length) {
+                    let current = queue.shift();
+                    let chilren = current.childNodes;
+                    arr = find(current, node, arr)
+                    for (let i = 0; i<= chilren.length - 1; i++) {
+                        if (chilren[i].nodeType !== 3) {
+                            queue.push(chilren[i])
+                        }  
+                    }
+                }
+            }
+            return arr
+        }
+
+        /**
+        * 图的深度度搜索（遍历非递归方法）
+        * element: 节点元素，例如： document.querySelector('#id')
+        * node: 字符串，例如，‘.class-name3’
+        */
+        function dFind(element, node) {
+            if (element === null || element === undefined 
+            || node === null || node === undefined) return [];
+            let stack = [];
+            let array = [];
+            if (element) {
+                stack.push(element);
+                while(stack.length) {
+                    let current = stack.pop();
+                    let chilren = current.childNodes;
+                    
+                    array = find(current, node, array)
+                    for (let i = chilren.length - 1; i>= 0; i--) {
+                        if (chilren[i].nodeType !== 3) {
+                            stack.push(chilren[i])
+                        }                       
+                    }
+                }
+            }
+            return array
+        }
+        function find(current, node, array) {
+            let firstStr = node.substr(0,1)
+            switch(firstStr) {
+                case '.': 
+                if (current.classList.contains(node.substr(1))) {
+                    array.push(current)
+                }; break;
+                case '#':
+                if (current.getAttribute('id') === node.substr(1)) {
+                    array.push(current)
+                }
+                break;
+                default: 
+                if (current.tagName.toLowerCase() === node.toLowerCase()) {
+                    array.push(current)
+                };break
+            }
+            return array
+        }
+        let element = document.querySelector('.class-name1')
+        console.log('利用广度搜索的方式，找到某个class节点：',bFind(element, '.class-name3'))
+        console.log('利用深度搜索的方式，找到某个class节点：',dFind(element, '.class-name3'))
+        console.log('==========================================================')
+
+        console.log('利用广度搜索的方式，找到某个span节点：',bFind(element, 'span'))
+        console.log('利用深度搜索的方式，找到某个span节点：',dFind(element, 'span'))
+        console.log('==========================================================')
+
+        console.log('利用广度搜索的方式，找到某个id节点：',bFind(element, '#find'))
+        console.log('利用深度搜索的方式，找到某个id节点：',dFind(element, '#find'))
+        console.log('==========================================================')
+
+    </script>
+    
+</body>
+</html>
