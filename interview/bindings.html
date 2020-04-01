@@ -1,0 +1,46 @@
+<!-- // 2. 根据下列代码， 实现一个简单的双向绑定库，只需考虑 string 类型。
+// （考察点， 设计模式， 编码能力）
+// <script>
+// var text=”john snow”
+// </script>
+//     <input type="text" id="input">
+// <div data-text="text" id=”name”></div> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="input">
+    <div data-text="text" id='name'></div>
+</body>
+<script>
+    var text='john snow'
+    let input = document.getElementById('input');
+    let node = document.querySelector('#name');       
+    node.innerHTML = text
+    input.value = text
+    input.addEventListener('input',function(e) {
+        let val = e.target.value;
+        node.innerHTML = val
+        text = val
+    })
+
+    let obj = {'dataText': text};
+    Object.defineProperty(obj, 'dataText', {
+        set(newVal) {
+            input.value = newVal;
+            node.innerHTML = newVal
+            text = newVal;
+        },
+
+        get() {
+            return text
+        }
+    })
+    // obj.dataText = 222
+
+</script>
+</html>

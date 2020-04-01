@@ -25,6 +25,13 @@
             </span>
         </div>
     </div>
+    <div id="flex" style="width: 300px; display: flex;">
+        <div class="flex1" style="flex-basis: 100px; background-color: red;">100px</div>
+        <div class="flex2" style="flex-basis: 50px;background-color: yellow;">10px</div>
+        <div class="flex3" style="flex-basis: 50px;background-color: blue;">50px</div>
+        <div class="flex1" style="flex-basis: 150px;background-color: goldenrod;">150px</div>
+        <div class="flex2" style="flex-basis: auto;background-color: green;">auto</div>
+    </div>
     <script>
         /**
         * 图的广度搜索
@@ -109,6 +116,165 @@
         console.log('利用广度搜索的方式，找到某个id节点：',bFind(element, '#find'))
         console.log('利用深度搜索的方式，找到某个id节点：',dFind(element, '#find'))
         console.log('==========================================================')
+        function flatten(arr) {
+            let result = []
+            for (let i = 0; i< arr.length; i++) {
+                if (arr[i] instanceof Array) {
+                    let list = flatten(arr[i])
+                    result.concat(list);
+                } else {
+                    result.push(arr[i])
+                }
+            }
+            return result
+        }
+        console.log('==',flatten([1, [2, [3, 4], 5], 6]));
+        const camelCasedData = {
+            age: 18,
+            gender: "female",
+            experiences: [
+                { from: "2009-09", to: "2013-06", exp: "School" },
+                { from: "2013-09", to: "2020-02", exp: "Job" },
+            ]
+        };
+
+        const camelToPascal = (input) => {
+            // TODO
+            let obj = {}
+            for (key in input) {
+                let charCode = key.substr(0,1).charCodeAt(0)
+                if ( charCode>=97  && charCode <=122) {
+                    let keyNew = key.substr(0,1).toUpperCase() + key.substr(1)
+                    obj[keyNew] = input[key]
+                }
+            }
+            return obj
+        };
+        const pascalToCamel = (input) => {
+            // TODO
+            let obj = {}
+            for (key in input) {
+                let charCode = key.substr(0,1).charCodeAt(0)
+                if ( charCode>= 65  && charCode <=90) {
+                    let keyNew = key.substr(0,1).toLowerCase() + key.substr(1)
+                    obj[keyNew] = input[key]
+                }
+            }
+            return obj
+        };
+
+        const pascalCased = camelToPascal(camelCasedData);
+        console.log('转大写==',pascalCased);
+        /* 期望输出：
+        {
+            Age: 18,
+            Gender: "female",
+            Experiences: [
+                { From: "2009-09", To: "2013-06", Exp: "School" },
+                { From: "2013-09", To: "2020-02", Exp: "Job" },
+            ]
+        }
+        */
+
+        const camelCasedData2 = pascalToCamel(pascalCased);
+        console.log('转小写', camelCasedData2)
+        // 应该和 camelCasedData 一样
+        var locationList = [
+            { id: 0, name: "中国" },
+            { id: 1, pid: 0, name: "广东省" },
+            { id: 2, pid: 1, name: "深圳市" },
+            { id: 3, pid: 1, name: "广州市" }
+        ]
+
+        // var locationTree = buildLocationTree(locationList);
+        // console.log(locationTree);
+
+        function buildLocationTree(locationList) {
+        // 请实现
+            let treeObj = {}
+            let root = {root: null}
+            
+            locationList.forEach(item => {
+                treeObj[item.id] = item
+            });
+            locationList.forEach((item)=> {
+                if (item.pid === null || item.pid === undefined) {
+                    root.root = treeObj[item.id];
+                } else {
+                    let pid = item.pid;
+                    if (treeObj[pid].subLocations instanceof Array) {
+                        treeObj[pid].subLocations.push(item)
+                    } else {
+                        treeObj[pid].subLocations = [item]
+                    }
+                }               
+            })
+            console.log('==', treeObj)
+            return root;
+        }
+
+        let obj= {
+            name: 'chen',
+            skill:['react','vue','javascript'],
+            say: function () {
+                for(let i = 0, len = this.skill.length; i< len; i++){
+                let _this = this
+                console.log('setTimeout前==', this.skill[i])
+                setTimeout(function(){
+                    console.log('No.' + i + _this.name);
+                    console.log(_this.skill[i]);
+                    console.log('--------------------------');
+                }, 0);
+                console.log(i);
+                }
+            }
+        }
+        // obj.say()
+
+        function repeat(func, times, wait){
+            return function() {
+                let i = 0
+                let arg = Array.prototype.slice.call(arguments)
+                var timer = setInterval(function(){
+                    i++;
+                    if (i === times) {clearInterval(timer); timer = null}
+                    func.call(this,arg)
+                },wait)
+            }
+        }
+        let rep = repeat(alert, 4, 3000);
+        // rep('hello')
+        function get() {
+        // 请补全函数参数和实现逻辑
+            let args = Array.prototype.slice.call(arguments)
+            let inputObj = args[0];
+            let resultArr = []
+            for (let i =1; i< args.length; i++){
+                let propertyArr = args[i].split('.');
+                let resultEle = inputObj
+                for(let j= 0; j<propertyArr.length; j++) {
+                    let leftIndex = propertyArr[j].indexOf('[')
+                    let rightIndex = propertyArr[j].indexOf(']')
+                    if (leftIndex === -1) {
+                        resultEle = resultEle[propertyArr[j]]
+                    } else {
+                        let property = propertyArr[j].substr(0, leftIndex)
+                        let arrIndexStr = propertyArr[j].substring(leftIndex+1, rightIndex)
+                        let arrIndex = Number(arrIndexStr)
+                        resultEle = resultEle[property][arrIndex]
+                    }
+                    
+                }
+                resultArr.push(resultEle)
+            }
+            return resultArr;
+            
+        }
+        const obj1 = { 
+            selector: { to: { toutiao: 'FE coder' } }, 
+            target: [1, 2, { name: 'byted' }] };// 运行代码
+        let getProperty = get(obj1, 'selector.to.toutiao', 'target[0]', 'target[2].name');
+        console.log('=====',getProperty)
 
     </script>
     

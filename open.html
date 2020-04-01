@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /**
+        * 数组的合并：[[2,4],[6,8],[1,3],[7,12]]=> [[1,4],[6,12]]
+        */
+        function combine(arr) {
+            if (arr.length <= 1) return arr
+            for (let i = 0; i < arr.length - 1; i++) {
+                for(let j = 0; j < arr.length - 1 - i; j++) {
+                    if (arr[j][0] > arr[j+1][0]) {
+                        let tmp = arr[j];
+                        arr[j] = arr[j+1];
+                        arr[j+1] = tmp
+                    }
+                }
+            }
+            // console.log('排序后的数组==',arr);
+            let resultArr = []
+            for (let i = 1; i< arr.length; i++) {
+                if (arr[i-1][1] > arr[i][0]) {
+                    let temp = [arr[i-1][0],arr[i][1]]
+                    resultArr.push(temp);
+                    arr[i]= temp
+                } else {
+                    if (resultArr[resultArr.length-1] !== arr[i-1]) {
+                        resultArr.push(arr[i-1])
+                    }                   
+                }
+            }
+            return resultArr
+        }
+        // console.log(combine([[2,4],[6,8],[1,3],[7,12]]))
+        function split(num) {
+            let numStr = String(num);
+            let dotIndex = numStr.indexOf('.');
+            let  dotLeft = dotLeft >= 0?numStr.substr(0, dotIndex): numStr
+            let dotRight = dotLeft >= 0? numStr.substr(dotIndex): null
+            let arr
+            for (let i = dotLeft.length - 1; i>=0; i = i-3) {
+                let startIndex = i-3>=0? i-3: 0
+                arr.push(dotLeft.substr(startIndex, i))
+            }
+            arr.reverse();
+            arr.push('.')
+            if (dotRight !== null) {
+                for(let i =0; i< dotRight.length-1; i= i+3) {
+                    arr.push(dotRight(i, i+3))
+                }
+            }
+        }
+    // console.log(shuffle([1,32,2,3,4]))
+    function getNextValue(arr, n) {
+        console.log(12333)
+        let left = 0;
+        let right = arr.length;
+        let middle = Math.floor((left+ right)/2);
+        while (left <= right) {
+            if (arr[middle] > n) {
+                right = middle
+            } else {
+                left = middle
+            }
+            middle = Math.floor((left+ right)/2)
+        }
+        if  (arr[middle] <= n) return -1;
+        return arr[middle]
+    }
+
+    let a = getNextValue([1,2,2,3,3,4,5,6,8,9,10],3)
+    console.log(a)
+    </script>
+</body>
+</html>
