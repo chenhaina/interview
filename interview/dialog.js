@@ -4,6 +4,7 @@
 // <div class=”title”></div>
 // <div class=””></div>
 // </div>
+const isMobile = /(iPhone|iPad|iPod|iOS|Android)/i.test(navigator.userAgent)
 class Dialog {
     constructor() {
         this.build();
@@ -15,15 +16,27 @@ class Dialog {
     }
 
     bindEvent = () =>{
-        this.element.addEventListener('touchstart', this.handleTouchStart)
-        this.element.addEventListener('touchmove', this.handleTouchMove)
-        this.element.addEventListener('touchend', this.handleTouchEnd)
+        if ( isMobile){ //移动端
+            this.element.addEventListener('touchstart', this.handleTouchStart)
+            this.element.addEventListener('touchmove', this.handleTouchMove)
+            this.element.addEventListener('touchend', this.handleTouchEnd)
+       } else {
+            this.element.addEventListener('mousedown', this.handleTouchStart)           
+            this.element.addEventListener('mouseup', this.handleTouchEnd)
+       }
+        
     }
 
     unbindEvent = () => {
-        this.element.removeEventListener('touchstart', this.handleTouchStart)
-        this.element.removeEventListener('touchmove', this.handleTouchMove)
-        this.element.removeEventListener('touchend', this.handleTouchEnd)
+        if (isMobile) { //移动端
+            this.element.removeEventListener('touchstart', this.handleTouchStart)
+            this.element.removeEventListener('touchmove', this.handleTouchMove)
+            this.element.removeEventListener('touchend', this.handleTouchEnd)
+        }else {
+            this.element.removeEventListener('mousedown', this.handleTouchStart)
+            this.element.removeEventListener('mousemove', this.handleTouchMove)
+            this.element.removeEventListener('mouseup', this.handleTouchEnd)
+        }
     }
 
     getTranslateXyz = (sty)=> {
@@ -43,13 +56,31 @@ class Dialog {
     handleTouchStart = (e)=> {
         let x = this.getTranslateXyz('x');
         let y = this.getTranslateXyz('y');
-        this.startX = e.touches[0].pageX - x;
-        this.startY = e.touches[0].pageY - y;
+        let pageX,pageY;
+        if(isMobile) {
+            pageX = e.touches[0].pageX;
+            pageY = e.touches[0].pageY
+        } else {
+            pageX = e.clientX;
+            pageY = e.clientY;
+            this.element.addEventListener('mousemove', this.handleTouchMove)
+        }
+
+        this.startX = pageX - x;
+        this.startY = pageY - y;
     }
 
     handleTouchMove = (e)=> {
-        this.endX = e.touches[0].pageX;
-        this.endY = e.touches[0].pageY;
+        let pageX, pageY
+        if(isMobile) {
+            pageX = e.touches[0].pageX;
+            pageY = e.touches[0].pageY
+        } else {
+            pageX = e.clientX;
+            pageY = e.clientY;
+        }
+        this.endX = pageX;
+        this.endY = pageY;
         let x = this.endX - this.startX;
         let y = this.endY - this.startY;
         this.element.style.transform = `translate3d(${x}px, ${y}px, 0)`
@@ -58,7 +89,10 @@ class Dialog {
 
     handleTouchEnd = (e)=> {
         this.unbindEvent();
-        this.bindEvent();
+        setTimeout(()=> {
+            this.bindEvent();
+        })
+        
     }
     
     build = ()=> {
